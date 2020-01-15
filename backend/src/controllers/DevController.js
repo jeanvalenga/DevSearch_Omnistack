@@ -40,7 +40,7 @@ module.exports = {
             })
         }
 
-//meu pinto é muito grande
+
         return response.json(dev);
     },
 
