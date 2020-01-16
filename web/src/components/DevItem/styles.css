@@ -20,6 +20,11 @@ li.dev-item header img{
 
 li.dev-item header .user-info{
     margin-left: 10px;
+    
+}
+
+li.dev-item header .div-delete{
+    margin-left: 100%px;
 }
 
 .user-info strong{
@@ -50,3 +55,15 @@ li.dev-item a{
 li.dev-item a:hover{
     color: #5a2ea6;
 }
+
+li.dev-item header button.delete{
+    padding: 12px;
+    margin-left: 120px;
+    
+    background-image: url("../assets/delete.png");
+    cursor: pointer;
+    
+}
+
+
+
