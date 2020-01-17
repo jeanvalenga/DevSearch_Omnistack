@@ -1,7 +1,7 @@
 const axios = require('axios');
 const Dev = require('../models/Dev')
 const parseStringAsArray = require('../utils/parseStringAsArray')
-
+const { findConnections ,sendMessage} = require('../websocket')
 //index,show,store,update,destroy
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
 
         return response.json(devs);
     },
- 
+
 
 
     async store(request, response) {
@@ -24,7 +24,7 @@ module.exports = {
             const { name = login, avatar_url, bio } = apiResponse.data;
 
             const techsArray = parseStringAsArray(techs);
-            
+
             const location = {
                 type: 'Point',
                 coordinates: [longitude, latitude],
@@ -38,6 +38,13 @@ module.exports = {
                 techs: techsArray,
                 location,
             })
+            // filtra conect que estão no maximo 10km de dist e que tem pelo menos uma techs buscada
+
+            const sendSocketMessageTo = findConnections(
+                { latitude, longitude },
+                techsArray,
+            )
+            sendMessage(sendSocketMessageTo,'New-Dev', dev);
         }
 
 
@@ -45,15 +52,15 @@ module.exports = {
     },
 
     async update(request, response) {
-        const {github_username, name, techs, bio, avatar_url } = request.body;
+        const { github_username, name, techs, bio, avatar_url } = request.body;
         const techsArray = parseStringAsArray(techs);
         let dev = await Dev.findOne({ github_username });
-    
 
-        if(!dev){
+
+        if (!dev) {
             return response.json("Usuario Não Encontrado");
         }
-        else{
+        else {
             dev = await Dev.updateOne({
                 name,
                 avatar_url,
@@ -62,24 +69,24 @@ module.exports = {
             })
             return response.json("Dados alterados com sucesso");
         }
-        
-        
+
+
     },
 
     async destroy(request, response) {
-        const {github_username} = request.query;
+        const { github_username } = request.query;
         let user = await Dev.findOne({ github_username });
-        
-        
-        if(!user){
+
+
+        if (!user) {
             return response.json("Usuario Não Encontrado");
         }
-        else{
-             user = await Dev.deleteOne({ github_username });  
-             return response.json("Usuario Deletado");
+        else {
+            user = await Dev.deleteOne({ github_username });
+            return response.json("Usuario Deletado");
         }
-        
-        
+
+
     },
-     
+
 }
